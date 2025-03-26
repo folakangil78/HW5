@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Francis Olakangil / Section 001
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.lang.Math;
+import java.security.DrbgParameters.Capability;
 
 
 /**
@@ -243,16 +244,50 @@ public class CuckooHash<K, V> {
 	 * @param key the key of the element to add
      * @param value the value of the element to add
 	 */
-
  	public void put(K key, V value) {
-
-		// ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME AT TOP OF FILE.
 		// Also make sure you read this method's prologue above, it should help
 		// you. Especially the two HINTS in the prologue.
+		
+		int pos1 = hash1(key);
+		int pos2=  hash2(key);
+		// calcing hash values above for key using given hash fxns
 
-		return;
+		Bucket<K, V> newEntry = new Bucket<>(key, value);
+		// create new bucket obj for key/val pair to be inserted
+		
+		int position = pos1;
+		int moves = 0;
+		// initialize pos where new entry is inserted and var to track moves in case of evictions
+
+		if ((table[pos1] != null && table[pos1].getBucKey().equals(key) && table[pos1].getValue().equals(value)) ||
+			(table[pos2] != null && table[pos2].getBucKey().equals(key) && table[pos2].getValue().equals(value))) {
+				return;
+		}
+		// chcks key val pair already exists ineither of pos and if so, return
+
+		while (moves < CAPACITY) {
+			if (table[position] == null) {
+				// if current pos empty, insert new entry here and ret
+				table[position] = newEntry;
+				return; // implies successful insertion so exit
+			}
+			Bucket<K, V> temporary = table[position];
+			// if current pos occupied, evict existing entry and place new entry at given pos
+			table[position] = newEntry;
+			newEntry = temporary; // set evicted entry as new entry to be reinsert
+
+			if (position == hash1(newEntry.getBucKey())) {
+				position = hash2(newEntry.getBucKey());
+			} else {
+				position = hash1(newEntry.getBucKey());
+			}
+
+			moves++;
+		}
+
+		rehash(); // if loop exceeds capacity of length, cycle takes place and rehash needed for more entries
+		put(newEntry.getBucKey(), newEntry.getValue());
 	}
-
 
 	/**
 	 * Method get

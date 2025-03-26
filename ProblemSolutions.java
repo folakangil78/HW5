@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Francis Olakangil / Section 001
  *
  *   This java file contains the problem solutions of isSubSet, findKthLargest,
  *   and sort2Arrays methods. You should utilize the Java Collection Framework for
@@ -31,10 +31,18 @@ class ProblemSolutions {
      */
 
     public boolean isSubset(int list1[], int list2[]) {
-
-        // ADD YOU CODE HERE -- DON'T FORGET TO ADD YOR NAME AT TOP OF FILE
-
-        return false;
+        Set<Integer> set = new HashSet<>();
+        // create hashSet for storing elems of list1
+        for (int num : list1) {
+            set.add(num);
+        }
+        for (int num : list2) {
+        // checks if every elem in list2 exists in hashSet in its current state (list1)
+            if (!set.contains(num)) { // if any of list2 not in set, return false
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -52,10 +60,17 @@ class ProblemSolutions {
      */
 
     public int findKthLargest(int[] array, int k) {
-
-        // ADD YOUR CODE HERE
-
-        return 0;
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>(k);
+        // min heap with k size
+        for (int num : array) {
+        // go through array and add elems to min heap
+            minHeap.offer(num); // add current num to heap
+            if (minHeap.size() > k) {
+            // if heap size larger than k, remove smallest elem with poll()
+                minHeap.poll();
+            }
+        }
+        return minHeap.peek(); // root of heap now has kth largest elem
     }
 
 
@@ -73,10 +88,21 @@ class ProblemSolutions {
      */
 
     public int[] sort2Arrays(int[] array1, int[] array2) {
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        // creates min heap for storing sorted elems
+        for (int num : array1) { // adds all elems from first array to min heap
+            minHeap.offer(num);
+        }
+        for (int num : array2) {
+            minHeap.offer(num);
+        }
+        int[] results = new int[array1.length + array2.length];
 
-        // ADD YOU CODE HERE
-
-        return null;
+        for (int i = 0; i < results.length; i++) {
+        // extract elems from min heap in sorted order and store in results array
+            results[i] = minHeap.poll(); // gets smallest element to remove
+        }
+        return results;
     }
 
 }
